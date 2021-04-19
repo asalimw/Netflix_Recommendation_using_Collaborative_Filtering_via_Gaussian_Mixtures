@@ -101,8 +101,7 @@ def bic(X: np.ndarray, mixture: GaussianMixture,
     # https://en.wikipedia.org/wiki/Akaike_information_criterion
     # http://www.ijetch.org/papers/144-L080.pdf
 
-    # The BIC of a model M is defined as:
-    # BIC (M) = l - 1/2*p*log(n)
+    # The BIC of a model M is defined as BIC (M) = l - 1/2*p*log(n)
     # where l is the likelihood, p is the no. of free parameters, n is the no. of data points
 
     # This score rewards a larger log-likelihood, but penalizes the number of parameters used to train the model.
@@ -111,7 +110,7 @@ def bic(X: np.ndarray, mixture: GaussianMixture,
     l = log_likelihood  # likelihood
     n = len(X)  # no. of data point
 
-    # theta is composed of .... (p_1,...p_k, mu_1,...mu_k, sigma_1,....sigma_k)
+    # theta is composed of .... (p_1,...p_k; mu_1,...mu_k; var_1,....var_k)
     K, d = mixture.mu.shape
     weight = K - 1   # For weight: Find the # of clusters less 1
     variance = K    # For variance: # of clusters

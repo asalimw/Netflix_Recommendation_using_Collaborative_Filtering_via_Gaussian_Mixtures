@@ -19,12 +19,16 @@ print("import done")
 # https://www.kaggle.com/charel/learn-by-example-expectation-maximization
 # https://www.youtube.com/watch?v=JNlEIEwe-Cg - informal explanation of GMM
 # https://vannevar.ece.uw.edu/techsite/papers/documents/UWEETR-2010-0002.pdf
-# https://en.wikipedia.org/wiki/EM_algorithm_and_GMM_model
 # https://github.com/llSourcell/Gaussian_Mixture_Models/blob/master/intro_to_gmm_%26_em.ipynb
 
 X = np.loadtxt('toy_data.txt') # Read a 2D toy dataset
-K = np.array([1,2,3,4]) # Initialise the no. of clusters
+K = np.array([1,2,3,4]) # Initialise the no. of clusters# https://en.wikipedia.org/wiki/EM_algorithm_and_GMM_model
+
 seeds = np.array([0,1,2,3,4]) # random seed used to randomly initialize the parameters.
+
+# BIC score of cluster
+bic = np.zeros(len(K))
+
 # print (X)
 # print(len(X))
 a = X[:,0]
@@ -36,7 +40,7 @@ b = X[:,1]
 # plt.scatter(a, b)
 # plt.show()
 
-for k in K:
+for j, k in enumerate(K):
     #Initialise empty vector for K-means
     mixtures = []
     posts = []
@@ -58,7 +62,7 @@ for k in K:
         mixture, post, cost = kmeans.run(X, mixture=mixture, post=post)
 
         # run EM Algo function
-        mixture_em, post_em, cost_em = naive_em.run(X, mixture=mixture_em, post=post_em)
+        mixture_em, post_em, ll = naive_em.run(X, mixture=mixture_em, post=post_em)
 
         # Update k-means values
         mixtures.append(mixture)
@@ -69,7 +73,7 @@ for k in K:
         # Update EM values
         mixtures_em.append(mixture_em)
         posts_em.append(post_em)
-        costs_em[i] = cost_em
+        logloss[i] = ll
         # print(k, seed, costs_em)
 
 
@@ -81,8 +85,8 @@ for k in K:
 
 
     # Finding the best/min cost of EM Algorithm
-    best_seed_em = np.argmin(costs_em)      # set the best seed by finding min value
-    cost_em = costs_em[best_seed_em]        # update cost with the best seed index
+    best_seed_em = np.argmax(logloss)      # set the best seed by finding min value
+    logloss = logloss[best_seed_em]        # update cost with the best seed index
     mixture_em = mixtures_em[best_seed_em]  # update mixture with best seed index
     post_em = posts_em[best_seed_em]        # update post/soft assignment with best seed index
 
@@ -91,20 +95,20 @@ for k in K:
     # common.plot(X, mixture, post, title=f"K-Means, K={k}")
 
     # Print output and graph of EM algorithm min cost
-    # print("EM method:", f'K={k}', f'Best seed: {best_seed_em}', f'Cost: {cost_em}')
+    # print("EM method:", f'K={k}', f'Best seed: {best_seed_em}', f'Cost: {logloss}')
     # common.plot(X, mixture_em, post_em, title=f"EM Algorithm, K={k}")
 
     # BIC score for EM
-    # In a situation where we wish to select models, we want a model with the the highest BIC.
-    best_seed_bic = np.argmax(costs_em)
-    logloss = logloss[best_seed_bic]
-    mixture_bic = mixtures[best_seed_bic]
-    post_bic = posts[best_seed_bic]
 
-    current_bic = common.bic(X, mixture_bic, logloss)
-    # bic[j] = current_bic
+    current_bic = common.bic(X, mixture_em, logloss)
+    bic[j] = current_bic
 
-    print(f'K={k}', f'Best seed={best_seed}', f'logloss={logloss}', f'BIC={current_bic}')
+    print(f'K={k}', f'Best seed={best_seed_em}', f'logloss={logloss}', f'BIC={current_bic}')
 
+# In a situation where we wish to select models, we want a model with the the highest BIC.
+best_K_ix = np.argmax(bic)
+best_K = K[best_K_ix]
+best_bic = bic[best_K_ix]
+print(f"Best K={best_K}", f"BIC={best_bic}")
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
