@@ -4,7 +4,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.patches import Circle, Arc
 
-
 class GaussianMixture(NamedTuple):
     """Tuple holding a gaussian mixture"""
     mu: np.ndarray  # (K, d) array - each row corresponds to a gaussian component mean
@@ -98,6 +97,28 @@ def bic(X: np.ndarray, mixture: GaussianMixture,
     Returns:
         float: the BIC for this mixture
     """
+    # https://en.wikipedia.org/wiki/Bayesian_information_criterion
+    # https://en.wikipedia.org/wiki/Akaike_information_criterion
+    # http://www.ijetch.org/papers/144-L080.pdf
 
-    # return bic_value
+    # The BIC of a model M is defined as:
+    # BIC (M) = l - 1/2*p*log(n)
+    # where l is the likelihood, p is the no. of free parameters, n is the no. of data points
+
+    # This score rewards a larger log-likelihood, but penalizes the number of parameters used to train the model.
+    # In a situation where we wish to select models, we want a model with the the highest BIC.
+
+    l = log_likelihood  # likelihood
+    n = len(X)  # no. of data point
+
+    # theta is composed of .... (p_1,...p_k, mu_1,...mu_k, sigma_1,....sigma_k)
+    K, d = mixture.mu.shape
+    weight = K - 1   # For weight: Find the # of clusters less 1
+    variance = K    # For variance: # of clusters
+    mean = K * d    # For mean: (# of clusters) * (# of dimensions of X)
+    p = (weight + mean + variance)  # no. of free parameters by adding all the weight, variance and mean
+
+    bic_M = l - (1/2 * p * np.log(n))   # applying the formula of BIC (M)
+    return bic_M
+
     raise NotImplementedError

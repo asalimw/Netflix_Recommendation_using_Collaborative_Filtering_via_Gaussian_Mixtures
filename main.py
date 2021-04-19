@@ -26,6 +26,7 @@ X = np.loadtxt('toy_data.txt') # Read a 2D toy dataset
 K = np.array([1,2,3,4]) # Initialise the no. of clusters
 seeds = np.array([0,1,2,3,4]) # random seed used to randomly initialize the parameters.
 # print (X)
+# print(len(X))
 a = X[:,0]
 b = X[:,1]
 # print("")
@@ -45,6 +46,7 @@ for k in K:
     mixtures_em = []
     posts_em = []
     costs_em = np.empty(len(seeds))
+    logloss = np.empty(len(seeds))
 
     for i, seed in enumerate(seeds):
         # initialize mixture model with random points
@@ -85,13 +87,24 @@ for k in K:
     post_em = posts_em[best_seed_em]        # update post/soft assignment with best seed index
 
     # Print output and graph of k-means min cost
-    # print(f'K={k}', f'Best seed: {best_seed}', f'Cost: {cost}')
-    common.plot(X, mixture, post, title=f"K-Means, K={k}")
-
+    # print("k-means method:", f'K={k}', f'Best seed: {best_seed}', f'Cost: {cost}')
+    # common.plot(X, mixture, post, title=f"K-Means, K={k}")
 
     # Print output and graph of EM algorithm min cost
-    # print(f'K={k}', f'Best seed: {best_seed_em}', f'Cost: {cost_em}')
+    # print("EM method:", f'K={k}', f'Best seed: {best_seed_em}', f'Cost: {cost_em}')
     # common.plot(X, mixture_em, post_em, title=f"EM Algorithm, K={k}")
+
+    # BIC score for EM
+    # In a situation where we wish to select models, we want a model with the the highest BIC.
+    best_seed_bic = np.argmax(costs_em)
+    logloss = logloss[best_seed_bic]
+    mixture_bic = mixtures[best_seed_bic]
+    post_bic = posts[best_seed_bic]
+
+    current_bic = common.bic(X, mixture_bic, logloss)
+    # bic[j] = current_bic
+
+    print(f'K={k}', f'Best seed={best_seed}', f'logloss={logloss}', f'BIC={current_bic}')
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
