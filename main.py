@@ -6,7 +6,9 @@
 import numpy as np
 import common
 import kmeans
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+import naive_em
+print("import done")
 
 # -----------------------------------
 # K-Means Algorithm
@@ -30,42 +32,66 @@ b = X[:,1]
 # print(a)
 # print("")
 # print(b)
-plt.scatter(a, b)
-plt.show()
+# plt.scatter(a, b)
+# plt.show()
 
 for k in K:
+    #Initialise empty vector for K-means
     mixtures = []
     posts = []
     costs = np.empty(len(seeds))
+
+    # Initialise empty vector for EM Algorithm
+    mixtures_em = []
+    posts_em = []
+    costs_em = np.empty(len(seeds))
 
     for i, seed in enumerate(seeds):
         # initialize mixture model with random points
         # init(X,K) returns a K-component mixture model with means, variances and mixing proportions.
         mixture, post = common.init(X, K=k, seed=seed)
-        # print(mixture)
-        # print(post)
+        mixture_em, post_em = common.init(X, K=k, seed=seed)  # For EM algorithm initialisation
 
-        # run k-means
+        # run k-means function
         mixture, post, cost = kmeans.run(X, mixture=mixture, post=post)
-        # print(mixture)
-        # print(post)
-        # print(cost)
 
+        # run EM Algo function
+        mixture_em, post_em, cost_em = naive_em.run(X, mixture=mixture_em, post=post_em)
+
+        # Update k-means values
         mixtures.append(mixture)
         posts.append(post)
         costs[i] = cost
-        # print(mixture)
-        # print(post)
         # print(k, seed, costs)
 
-    best_seed = np.argmin(costs)
-    cost = costs[best_seed]
-    mixture = mixtures[best_seed]
-    post = posts[best_seed]
+        # Update EM values
+        mixtures_em.append(mixture_em)
+        posts_em.append(post_em)
+        costs_em[i] = cost_em
+        # print(k, seed, costs_em)
 
+
+    # Finding the best/min cost of k-means
+    best_seed = np.argmin(costs)    # set the best seed by finding min value
+    cost = costs[best_seed]         # update cost with the best seed index
+    mixture = mixtures[best_seed]   # update mixture with best seed index
+    post = posts[best_seed]         # update post/soft assignment with best seed index
+
+
+    # Finding the best/min cost of EM Algorithm
+    best_seed_em = np.argmin(costs_em)      # set the best seed by finding min value
+    cost_em = costs_em[best_seed_em]        # update cost with the best seed index
+    mixture_em = mixtures_em[best_seed_em]  # update mixture with best seed index
+    post_em = posts_em[best_seed_em]        # update post/soft assignment with best seed index
+
+    # Print output and graph of k-means min cost
     # print(f'K={k}', f'Best seed: {best_seed}', f'Cost: {cost}')
+    common.plot(X, mixture, post, title=f"K-Means, K={k}")
 
-    # common.plot(X, mixture, post, title=f"K-Means, K={k}")
+
+    # Print output and graph of EM algorithm min cost
+    # print(f'K={k}', f'Best seed: {best_seed_em}', f'Cost: {cost_em}')
+    # common.plot(X, mixture_em, post_em, title=f"EM Algorithm, K={k}")
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

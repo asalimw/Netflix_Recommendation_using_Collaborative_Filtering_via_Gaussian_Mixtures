@@ -2,7 +2,7 @@
 from typing import Tuple
 import numpy as np
 from common import GaussianMixture
-print("import done")
+
 
 # Helpful tips for EM Algorithm
 # https://www.kaggle.com/charel/learn-by-example-expectation-maximization
