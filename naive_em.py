@@ -55,6 +55,7 @@ def estep(X: np.ndarray, mixture: GaussianMixture) -> Tuple[np.ndarray, float]:
     # Calculate the posterior probability of each data point i belonging to Gaussian component j
     # Posterior Prob = (Prior * Likelihood)/Sum(Likelihood Gaussian components)
     # https://medium.com/analytics-vidhya/expectation-maximization-algorithm-step-by-step-30157192de9f
+    # https://cse.iitrpr.ac.in/mukesh/CS623-1920/L5-6-7-Anomaly-GMM.pdf
 
     for i in range(n):
         for j in range(K):
@@ -62,6 +63,7 @@ def estep(X: np.ndarray, mixture: GaussianMixture) -> Tuple[np.ndarray, float]:
             # With Bayes Rule - Check wikipedia for the formula
             # https://en.wikipedia.org/wiki/EM_algorithm_and_GMM_model
 
+            # Using Multivariate - Density Gaussian Dist
             sigma = var[j] * np.identity(d)
             g_numerator = (-1 / 2) * ((X[i] - mu[j]).T.dot(np.linalg.inv(sigma))).dot((X[i] - mu[j]))
             g_denominator = (((2 * np.pi) ** (d / 2)) * (np.linalg.det(sigma) ** (1 / 2)))

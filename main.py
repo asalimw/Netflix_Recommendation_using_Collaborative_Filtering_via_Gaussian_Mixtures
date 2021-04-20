@@ -91,19 +91,17 @@ for j, k in enumerate(K):
     post_em = posts_em[best_seed_em]        # update post/soft assignment with best seed index
 
     # Print output and graph of k-means min cost
-    # print("k-means method:", f'K={k}', f'Best seed: {best_seed}', f'Cost: {cost}')
-    # common.plot(X, mixture, post, title=f"K-Means, K={k}")
+    print("k-means method:", f'K={k}', f'Best seed: {best_seed}', f'Cost: {cost}')
+    common.plot(X, mixture, post, title=f"K-Means, K={k}")
 
     # Print output and graph of EM algorithm min cost
-    # print("EM method:", f'K={k}', f'Best seed: {best_seed_em}', f'Cost: {logloss}')
-    # common.plot(X, mixture_em, post_em, title=f"EM Algorithm, K={k}")
+    print("EM method:", f'K={k}', f'Best seed: {best_seed_em}', f'Cost: {logloss}')
+    common.plot(X, mixture_em, post_em, title=f"EM Algorithm, K={k}")
 
     # BIC score for EM
-
     current_bic = common.bic(X, mixture_em, logloss)
     bic[j] = current_bic
-
-    print(f'K={k}', f'Best seed={best_seed_em}', f'logloss={logloss}', f'BIC={current_bic}')
+    # print(f'K={k}', f'Best seed={best_seed_em}', f'logloss={logloss}', f'BIC={current_bic}')
 
 # In a situation where we wish to select models, we want a model with the the highest BIC.
 best_K_ix = np.argmax(bic)
