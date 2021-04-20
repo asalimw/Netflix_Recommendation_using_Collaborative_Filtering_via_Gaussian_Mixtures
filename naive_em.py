@@ -63,7 +63,7 @@ def estep(X: np.ndarray, mixture: GaussianMixture) -> Tuple[np.ndarray, float]:
             # With Bayes Rule - Check wikipedia for the formula
             # https://en.wikipedia.org/wiki/EM_algorithm_and_GMM_model
 
-            # Using Multivariate - Density Gaussian Dist
+            # Using Multivariate Density - Gaussian Dist
             sigma = var[j] * np.identity(d)
             g_numerator = (-1 / 2) * ((X[i] - mu[j]).T.dot(np.linalg.inv(sigma))).dot((X[i] - mu[j]))
             g_denominator = (((2 * np.pi) ** (d / 2)) * (np.linalg.det(sigma) ** (1 / 2)))
