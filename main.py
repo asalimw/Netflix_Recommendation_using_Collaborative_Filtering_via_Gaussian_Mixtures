@@ -109,4 +109,7 @@ best_K = K[best_K_ix]
 best_bic = bic[best_K_ix]
 print(f"Best K={best_K}", f"BIC={best_bic}")
 
+
+
+
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
